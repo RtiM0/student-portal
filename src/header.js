@@ -15,10 +15,8 @@ export default function Header({ onClick }) {
                 <span className="ml-3 text-xl">Student Portal</span>
             </button>
             <div className="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0">
-                <button onClick={() => onClick()} className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Sign Out
-                    <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
-                        <path d="M5 12h14M12 5l7 7-7 7"></path>
-                    </svg>
+                <button onClick={() => onClick()} className="py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-white text-blue-900 hover:bg-blue-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Sign Out
                 </button>
             </div>
         </div>

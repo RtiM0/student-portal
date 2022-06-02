@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import { API } from 'aws-amplify'
 
-export default function CreateUser({ children, type }) {
+export default function CreateField({ username }) {
     let [isOpen, setIsOpen] = useState(false)
 
     function closeModal() {
@@ -17,18 +17,18 @@ export default function CreateUser({ children, type }) {
         event.preventDefault()
         const init = {
             body: {
-                username: event.target.username.value,
-                email: event.target.email.value,
-                password: event.target.password.value,
-                type: type.toLowerCase(),
-
+                studentID: username,
+                detail: {}
             }
         }
-        if (type === "Student") {
-            init.body["departmentNo"] = event.target.department.value
-            init.body["classNo"] = event.target.class.value
+        var value
+        try {
+            value = JSON.parse(event.target.value.value)
+        } catch (_) {
+            value = event.target.value.value
         }
-        API.post("student-portal-api", "/createuser", init)
+        init.body.detail[event.target.title.value] = value
+        API.post("student-portal-api", "/adddetail", init)
             .then(res => console.log(res))
         closeModal()
     }
@@ -40,7 +40,7 @@ export default function CreateUser({ children, type }) {
                 onClick={openModal}
                 className="py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-                {children}
+                Add Field
             </button>
 
             <Transition appear show={isOpen} as={Fragment}>
@@ -73,70 +73,30 @@ export default function CreateUser({ children, type }) {
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900"
                                     >
-                                        Create {type}
+                                        Add Field
                                     </Dialog.Title>
                                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                                         <div className="mt-2">
                                             <div className='grid grid-cols-3 gap-1'>
                                                 <label htmlFor="username" className="block p-2 text-sm font-medium text-gray-700">
-                                                    Username
+                                                    Title
                                                 </label>
                                                 <input
-                                                    id="username"
-                                                    name="username"
+                                                    id="title"
+                                                    name="title"
                                                     type="text"
-                                                    autoComplete="username"
                                                     required
                                                     className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                                 />
                                                 <label htmlFor="email-address" className="block p-2 text-sm font-medium text-gray-700">
-                                                    Email
+                                                    Value
                                                 </label>
-                                                <input
-                                                    id="email-address"
-                                                    name="email"
-                                                    type="email"
-                                                    autoComplete="email"
+                                                <textarea
+                                                    id="value"
+                                                    name="value"
+                                                    type="text"
                                                     required
                                                     className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                                />
-                                                {
-                                                    type === "Student" ?
-                                                        <>
-                                                            <label htmlFor="departmentNo" className="block p-2 text-sm font-medium text-gray-700">
-                                                                Department No
-                                                            </label>
-                                                            <input
-                                                                id="departmentNo"
-                                                                name="department"
-                                                                type="number"
-                                                                required
-                                                                className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                                            />
-                                                            <label htmlFor="classNo" className="block p-2 text-sm font-medium text-gray-700">
-                                                                Class No
-                                                            </label>
-                                                            <input
-                                                                id="classNo"
-                                                                name="class"
-                                                                type="number"
-                                                                required
-                                                                className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                                            />
-                                                        </>
-                                                        :
-                                                        <></>
-                                                }
-                                                <label htmlFor="password" className="block p-2 text-sm font-medium text-gray-700">
-                                                    Password
-                                                </label>
-                                                <input
-                                                    id="password"
-                                                    name="password"
-                                                    type="password"
-                                                    autoComplete="current-password"
-                                                    required
-                                                    className="mt-1 col-span-2 p-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                                 />
                                             </div>
                                         </div>
@@ -145,7 +105,7 @@ export default function CreateUser({ children, type }) {
                                             <input
                                                 type="submit"
                                                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                                value={`Create ${type}`}
+                                                value="Add Field"
                                             />
                                         </div>
                                     </form>
