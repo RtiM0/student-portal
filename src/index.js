@@ -20,7 +20,7 @@ Amplify.configure({
       responseType: 'code',
     },
     cookieStorage: {
-      domain: "localhost",
+      domain: process.env.NODE_ENV === 'production' ? "studentportal.shakirmustafa.com" : "localhost",
       path: "/",
       expires: 365,
       secure: true
