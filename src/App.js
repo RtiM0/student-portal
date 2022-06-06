@@ -1,50 +1,79 @@
-import React, { useEffect } from "react";
-import Amplify, { Auth } from "aws-amplify";
-import Home from "./Home.js"
+import { useEffect, useState } from "react";
+import { Auth, API, Hub } from 'aws-amplify';
+import Header from "./header";
+import AdminDashBoard from "./AdminDashboard";
+import Landing from "./Landing";
+import FacultyDashboard from "./FacultyDashboard";
+import StudentDashboard from "./StudentDashboard";
 
-function App() {
 
-  useEffect(() => {
-    Amplify.configure({
-      Auth: {
-        region: 'ap-south-1',
-        userPoolId: process.env.REACT_APP_USERPOOLID,
-        userPoolWebClientId: process.env.REACT_APP_CLIENTID,
-        mandatorySignIn: true,
-        oauth: {
-          domain: 'studentportal.auth.ap-south-1.amazoncognito.com',
-          scope: ['email', 'openid', 'phone', 'aws.cognito.signin.user.admin'],
-          redirectSignIn: 'http://localhost:3000',
-          redirectSignOut: 'http://localhost:3000',
-          responseType: 'code',
-        },
-        cookieStorage: {
-          domain: "localhost",
-          path: "/",
-          expires: 365,
-          secure: true
-        }
-      },
-      API: {
-        endpoints: [
-          {
-            name: "student-portal-api",
-            endpoint: process.env.REACT_APP_API_ENDPOINT,
-            region: 'ap-south-1',
-            custom_header: async () => {
-              return { Authorization: `Bearer ${(await Auth.currentSession()).getAccessToken().getJwtToken()}` }
+export default function App() {
+    const [user, setUser] = useState(null)
+    const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        Hub.listen('auth', ({ payload: { event, data } }) => {
+            switch (event) {
+                case 'signIn':
+                    signedIn(data)
+                    break
+                case 'signOut':
+                    setUser(null)
+                    break
+                default:
+                    console.log(event)
+                    break
             }
-          }
-        ]
-      }
-    })
-  }, []);
+        })
+    }, [])
 
-  return (
-    <div className="text-center">
-      <Home />
-    </div>
-  );
+    useEffect(() => {
+        Auth.currentAuthenticatedUser().then(user => {
+            signedIn(user)
+        }).catch((err) => setLoading(false))
+    }, [])
+
+    function signedIn(user) {
+        const cognitoUser = user.signInUserSession.idToken.payload
+        Auth.currentUserInfo()
+            .then(res => {
+                cognitoUser.attributes = res.attributes;
+                setUser(cognitoUser)
+                setLoading(false)
+            })
+        if (cognitoUser["cognito:groups"][0] !== "student")
+            API.get("student-portal-api", "/users")
+                .then(res => { setUsers(res.users) });
+    }
+
+    return (
+        <header>
+            {
+                loading ? <>LOADING</>
+                    :
+                    !user ?
+                        <Landing onClick={setUser} />
+                        :
+                        <div>
+                            <Header onClick={() => Auth.signOut()} />
+                            {
+                                user["cognito:groups"][0] !== "student" ?
+                                    <>
+                                        {user["cognito:groups"][0] === "superadmin"
+                                            ?
+                                            <>
+                                                <AdminDashBoard user={user} users={users} />
+                                            </>
+                                            :
+                                            <>
+                                                <FacultyDashboard user={user} users={users} />
+                                            </>}
+                                    </>
+                                    :
+                                    <StudentDashboard user={user} />
+                            }
+                        </div>
+            }
+        </header>)
 }
-
-export default App;

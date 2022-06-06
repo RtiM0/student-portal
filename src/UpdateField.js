@@ -1,17 +1,9 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
-// import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
 import { API } from 'aws-amplify'
-// import DynamicField from './DynamicField'
-// import { v4 } from 'uuid'
 
-export default function CreateField({ username, onUpdate }) {
+export default function UpdateField({ username, name, detail, onUpdate }) {
     let [isOpen, setIsOpen] = useState(false)
-    // const [fields, setfields] = useState([
-    //     {
-    //         id: v4(),
-    //         data: <DynamicField />
-    //     }])
 
     function closeModal() {
         setIsOpen(false)
@@ -25,7 +17,7 @@ export default function CreateField({ username, onUpdate }) {
         event.preventDefault()
         const init = {
             body: {
-                studentID: username,
+                username,
                 detail: {}
             }
         }
@@ -36,7 +28,7 @@ export default function CreateField({ username, onUpdate }) {
             value = event.target.value.value
         }
         init.body.detail[event.target.title.value] = value
-        API.post("student-portal-api", "/adddetail", init)
+        API.post("student-portal-api", "/updatestudent", init)
             .then(res => console.log(res))
         onUpdate()
         closeModal()
@@ -47,9 +39,9 @@ export default function CreateField({ username, onUpdate }) {
             <button
                 type="button"
                 onClick={openModal}
-                className="py-2 px-4 border border-transparent text-lg font-medium rounded-md bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="bg-blue-100 text-blue-900 px-5 p-1 rounded font-semibold cursor-pointer hover:bg-blue-200 mr-2"
             >
-                Add Field
+                Edit
             </button>
 
             <Transition appear show={isOpen} as={Fragment}>
@@ -80,9 +72,9 @@ export default function CreateField({ username, onUpdate }) {
                                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-50 p-6 text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title
                                         as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900"
+                                        className="text-lg capitalize font-medium leading-6 text-gray-900"
                                     >
-                                        Add Field
+                                        update {name}
                                     </Dialog.Title>
                                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                                         <div className="mt-2">
@@ -94,6 +86,7 @@ export default function CreateField({ username, onUpdate }) {
                                                     id="title"
                                                     name="title"
                                                     type="text"
+                                                    defaultValue={name}
                                                     required
                                                     className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                                 />
@@ -102,32 +95,20 @@ export default function CreateField({ username, onUpdate }) {
                                                 </label>
                                                 <textarea
                                                     id="value"
-                                                    placeholder='Enter Value in JSON format or Text Format'
                                                     name="value"
                                                     type="text"
+                                                    defaultValue={JSON.stringify(detail)}
                                                     required
                                                     className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                                 />
                                             </div>
-                                            {/* {fields.map((u) =>
-                                            (
-                                                <form key={u.id} id={u.id} className="flex items-center">
-                                                    {u.data}
-                                                    <div>
-                                                        <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400'>&nbsp;</label>
-                                                        <MinusCircleIcon onClick={() => { setfields(fields.filter((field) => field.id !== u.id)) }} className="h-8 dark:text-gray-400 hover:text-gray-900" />
-                                                    </div>
-                                                </form>
-
-                                            ))}
-                                            <PlusCircleIcon onClick={() => { setfields(fields.concat({ id: v4(), data: <DynamicField /> })) }} className="h-8 dark:text-gray-400 hover:text-gray-900" /> */}
                                         </div>
 
                                         <div className="mt-4 flex justify-center">
                                             <input
                                                 type="submit"
                                                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                                value="Add Field"
+                                                value="Update Field"
                                             />
                                         </div>
                                     </form>

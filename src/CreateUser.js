@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import { API } from 'aws-amplify'
 
-export default function CreateUser({ children, type }) {
+export default function CreateUser({ children, type, onUpdate }) {
     let [isOpen, setIsOpen] = useState(false)
 
     function closeModal() {
@@ -30,6 +30,7 @@ export default function CreateUser({ children, type }) {
         }
         API.post("student-portal-api", "/createuser", init)
             .then(res => console.log(res))
+        onUpdate()
         closeModal()
     }
 
@@ -38,7 +39,7 @@ export default function CreateUser({ children, type }) {
             <button
                 type="button"
                 onClick={openModal}
-                className="py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="py-2 px-4 border border-transparent font-medium rounded-md bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
                 {children}
             </button>
