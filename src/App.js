@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Auth, API, Hub } from 'aws-amplify';
-import Header from "./header";
-import AdminDashBoard from "./AdminDashboard";
-import Landing from "./Landing";
-import FacultyDashboard from "./FacultyDashboard";
-import StudentDashboard from "./StudentDashboard";
+import Header from "./components/header";
+import AdminDashBoard from "./screens/AdminDashboard";
+import Landing from "./screens/Landing";
+import FacultyDashboard from "./screens/FacultyDashboard";
+import StudentDashboard from "./screens/StudentDashboard";
 
 
 export default function App() {

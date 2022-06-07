@@ -1,4 +1,4 @@
-import UsersSection from './UsersSection';
+import UsersSection from '../components/UsersSection';
 import { BriefcaseIcon, InboxIcon } from '@heroicons/react/solid'
 
 export default function FacultyDashboard({ user, users }) {

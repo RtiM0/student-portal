@@ -1,7 +1,20 @@
-import UsersSection from './UsersSection';
+import { useEffect, useState } from 'react'
+import { API } from 'aws-amplify'
+import StudentDetails from '../components/StudentDetails'
 import { BriefcaseIcon, InboxIcon } from '@heroicons/react/solid'
 
-export default function AdminDashBoard({ user, users }) {
+export default function StudentDashboard({ user }) {
+
+    const [details, setDetails] = useState(null)
+
+    useEffect(() => {
+        API.get("student-portal-api", `/students/${user["cognito:username"]}`)
+            .then(res => {
+                setDetails(res.User)
+            });
+    }, [user])
+
+
     return <>
         <div className="lg:flex lg:items-center lg:justify-between text-left mx-5 px-5 rounded-md shadow py-2 capitalize bg-gray-50">
             <div className="flex-1 min-w-0">
@@ -19,8 +32,13 @@ export default function AdminDashBoard({ user, users }) {
             </div>
         </div>
         <section className="text-gray-600 body-font">
-            <div className="container px-5 pt-5 mx-auto">
-                <UsersSection users={users} type="Faculty" />
+            <div className="container px-5 mx-auto mt-5">
+                {
+                    details ?
+                        <StudentDetails details={details} />
+                        :
+                        <></>
+                }
             </div>
         </section>
     </>
