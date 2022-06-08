@@ -60,26 +60,28 @@ export default function StudentDetails({ details, canEdit, onUpdate }) {
 
     function onSubmitSave(event) {
         event.preventDefault()
-        const departmentNo = event.target.department_no.value
-        const classNo = event.target.class_no.value
+        try {
+            const departmentNo = event.target.department_no.value
+            const classNo = event.target.class_no.value
 
-        const detail = {}
-        details.Items.forEach(element => {
-            if (typeof element.detail != "object") {
-                detail[element.name] = event.target[element.name.replace(" ", "_")].value
+            const detail = {}
+            details.Items.forEach(element => {
+                if (typeof element.detail != "object") {
+                    detail[element.name] = event.target[element.name.replace(" ", "_")].value
+                }
+            })
+
+            const params = { body: { username: details.Username } }
+            if (departmentNo !== details.UserAttributes.filter((element) => element.Name === 'custom:departmentNo')[0]["Value"] || classNo !== details.UserAttributes.filter((element) => element.Name === 'custom:classNo')[0]["Value"]) {
+                params.body["departmentNo"] = departmentNo
+                params.body["classNo"] = classNo
             }
-        })
 
-        const params = { body: { username: details.Username } }
-        if (departmentNo !== details.UserAttributes.filter((element) => element.Name === 'custom:departmentNo')[0]["Value"] || classNo !== details.UserAttributes.filter((element) => element.Name === 'custom:classNo')[0]["Value"]) {
-            params.body["departmentNo"] = departmentNo
-            params.body["classNo"] = classNo
-        }
-
-        params.body["detail"] = detail
-        API.post("student-portal-api", "/updatestudent", params)
-            .then(res => console.log(res))
-        onUpdate()
+            params.body["detail"] = detail
+            API.post("student-portal-api", "/updatestudent", params)
+                .then(res => console.log(res))
+            onUpdate()
+        } catch { onUpdate() }
     }
 
 

@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-function DynamicField() {
+function DynamicField({ field, type, value }) {
+    let [valueType, setValueType] = useState(type ? type : "text")
+
     return (
         <>
             <div>
 
                 <label
-                    for="field"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+                    htmlFor="field"
+                    className="block mb-2 text-sm font-medium   "
                 >
                     Field
                 </label>
@@ -15,36 +17,38 @@ function DynamicField() {
                     type="text"
                     name="field"
                     id="field"
+                    defaultValue={field}
                     placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     required
                 />
             </div>
             <div>
-                <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400'>&nbsp;</label>
-                <p className="mx-2 dark:text-white">=</p>
+                <p className="mx-2">=</p>
             </div>
-            <div>
+            <div className='m-2'>
                 <label
-                    for="type"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+                    htmlFor="type"
+                    className="block mb-2 text-sm font-medium"
                 >
                     Type
                 </label>
                 <select
                     id="type"
                     name="type"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 mr-2 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    onChange={(event) => { setValueType(event.target.value) }}
+                    defaultValue={type}
+                    className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                 >
-                    <option>Text</option>
-                    <option>Number</option>
+                    <option value={"text"}>Text</option>
+                    <option value={"list"}>List</option>
                     {/* <option>List</option> */}
                 </select>
             </div>
             <div>
                 <label
-                    for="value"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+                    htmlFor="value"
+                    className="block mb-2 text-sm font-medium"
                 >
                     Value
                 </label>
@@ -52,8 +56,9 @@ function DynamicField() {
                     type="text"
                     name="value"
                     id="value"
-                    placeholder=""
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    defaultValue={value}
+                    placeholder={valueType === "text" ? "" : "Seperate by Commas"}
+                    className="mt-1 p-1 col-span-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     required
                 />
             </div>

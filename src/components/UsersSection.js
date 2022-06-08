@@ -24,7 +24,6 @@ export default function UsersSection({ users, type }) {
     }, [selectedButton, type, update])
 
     function onUpdate() {
-        console.log("HELLo")
         setUpdate(!update)
     }
 
